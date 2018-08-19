@@ -1,4 +1,4 @@
-# Hangulize CLI
+# Hangulize Command
 
 ## Installation
 
