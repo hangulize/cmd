@@ -1,8 +1,10 @@
 package cmd
 
 import (
+	"bufio"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/hangulize/hangulize"
 	"github.com/hangulize/hangulize/phonemize/furigana"
@@ -19,10 +21,9 @@ var rootCmd = &cobra.Command{
 	Use:   "hangulize LANG WORD",
 	Short: "Hangulize tools",
 
-	Args: cobra.ExactArgs(2),
+	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		lang := args[0]
-		word := args[1]
 
 		spec, ok := hangulize.LoadSpec(lang)
 		if !ok {
@@ -31,8 +32,39 @@ var rootCmd = &cobra.Command{
 		}
 
 		h := hangulize.NewHangulizer(spec)
-		fmt.Println(h.Hangulize(word))
+
+		ch := make(chan string)
+		go readWords(ch, args)
+
+		for {
+			word := <-ch
+			if word == "" {
+				break
+			}
+			fmt.Println(h.Hangulize(word))
+		}
 	},
+}
+
+func readWords(ch chan<- string, args []string) {
+	if len(args) == 1 {
+		reader := bufio.NewReader(os.Stdin)
+		for {
+			word, err := reader.ReadString('\n')
+			if err != nil {
+				break
+			}
+			word = strings.TrimSpace(word)
+			ch <- word
+		}
+	} else {
+		for _, word := range args[1:] {
+			if word != "" {
+				ch <- word
+			}
+		}
+	}
+	ch <- ""
 }
 
 // Execute runs the root command. It's the entry point for every sub commands.
