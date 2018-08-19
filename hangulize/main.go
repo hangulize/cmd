@@ -1,6 +1,6 @@
 package main
 
-import "github.com/hangulize/cli/hangulize/cmd"
+import "github.com/hangulize/cmd/hangulize/cmd"
 
 func main() {
 	cmd.Execute()
