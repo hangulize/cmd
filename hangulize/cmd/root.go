@@ -12,9 +12,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var verbose bool
+
 func init() {
 	hangulize.UsePhonemizer(&furigana.P)
 	hangulize.UsePhonemizer(&pinyin.P)
+
+	rootCmd.PersistentFlags().BoolVarP(
+		&verbose, "verbose", "v", false, "verbose output")
 }
 
 var rootCmd = &cobra.Command{
@@ -32,18 +37,34 @@ var rootCmd = &cobra.Command{
 		}
 
 		h := hangulize.NewHangulizer(spec)
+		hangulizeStream(cmd, args, h)
+	},
+}
 
-		ch := make(chan string)
-		go readWords(ch, args)
+func hangulizeStream(
+	cmd *cobra.Command,
+	args []string,
+	h *hangulize.Hangulizer,
+) {
+	ch := make(chan string)
+	go readWords(ch, args)
 
-		for {
-			word := <-ch
-			if word == "" {
-				break
+	for {
+		word := <-ch
+		if word == "" {
+			break
+		}
+
+		if verbose {
+			transcribed, tr := h.HangulizeTrace(word)
+			for _, t := range tr {
+				cmd.Println(t.String())
 			}
+			cmd.Println(transcribed)
+		} else {
 			cmd.Println(h.Hangulize(word))
 		}
-	},
+	}
 }
 
 func readWords(ch chan<- string, args []string) {
