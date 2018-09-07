@@ -7,17 +7,12 @@ import (
 	"strings"
 
 	"github.com/hangulize/hangulize"
-	"github.com/hangulize/hangulize/phonemize/furigana"
-	"github.com/hangulize/hangulize/phonemize/pinyin"
 	"github.com/spf13/cobra"
 )
 
 var verbose bool
 
 func init() {
-	hangulize.UsePhonemizer(&furigana.P)
-	hangulize.UsePhonemizer(&pinyin.P)
-
 	rootCmd.PersistentFlags().BoolVarP(
 		&verbose, "verbose", "v", false, "verbose output")
 }
