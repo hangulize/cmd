@@ -27,7 +27,7 @@ var rootCmd = &cobra.Command{
 
 		spec, ok := hangulize.LoadSpec(lang)
 		if !ok {
-			fmt.Println("Lang not supported:", lang)
+			cmd.Println("Lang not supported:", lang)
 			os.Exit(1)
 		}
 
@@ -41,7 +41,7 @@ var rootCmd = &cobra.Command{
 			if word == "" {
 				break
 			}
-			fmt.Println(h.Hangulize(word))
+			cmd.Println(h.Hangulize(word))
 		}
 	},
 }

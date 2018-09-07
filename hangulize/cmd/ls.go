@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 
 	"github.com/hangulize/hangulize"
@@ -18,11 +16,11 @@ var lsCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		template := "%-8s %-8s %-24s %-24s\n"
 
-		fmt.Printf(template, "LANG", "STAGE", "ENG", "KOR")
+		cmd.Printf(template, "LANG", "STAGE", "ENG", "KOR")
 
 		for _, lang := range hangulize.ListLangs() {
 			spec, _ := hangulize.LoadSpec(lang)
-			fmt.Printf(template,
+			cmd.Printf(template,
 				lang,
 				spec.Config.Stage,
 				spec.Lang.English,
