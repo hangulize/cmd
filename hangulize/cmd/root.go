@@ -51,13 +51,12 @@ func hangulizeStream(
 		}
 
 		if verbose {
-			transcribed, tr := h.HangulizeTrace(word)
-			for _, t := range tr {
-				cmd.Println(t.String())
-			}
-			cmd.Println(transcribed)
+			transcribed, traces := h.HangulizeTrace(word)
+			traces.Render(cmd.OutOrStderr())
+			fmt.Fprintln(cmd.OutOrStdout(), transcribed)
 		} else {
-			cmd.Println(h.Hangulize(word))
+			transcribed := h.Hangulize(word)
+			fmt.Fprintln(cmd.OutOrStdout(), transcribed)
 		}
 	}
 }
